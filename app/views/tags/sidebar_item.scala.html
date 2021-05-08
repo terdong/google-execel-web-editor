@@ -1,0 +1,10 @@
+@import play.twirl.api.TwirlFeatureImports.defining
+@(itemName: String, route: Call)(implicit tabName: String)
+
+@defining(itemName == tabName) { bool =>
+    <li class>
+        <a href="@route" class="@("active".when(bool)) nav-link text-white ">
+            @itemName
+        </a>
+    </li>
+}

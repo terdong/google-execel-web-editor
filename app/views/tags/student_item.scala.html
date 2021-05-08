@@ -1,0 +1,13 @@
+@(index:Int, student:Student)
+<tr>
+    <th scope="row">@index</th>
+    <td><a href="https://docs.google.com/spreadsheets/d/@{student.id}">@student.name</a></td>
+    <td>@defining(student.group){ group =>
+      @{
+        group match {
+            case CLang => "C언어"
+            case BlockCoding => "블럭코딩"
+        }
+      }
+    }</td>
+</tr>

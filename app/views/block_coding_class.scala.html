@@ -1,0 +1,82 @@
+@import views.html.helper.CSRF
+@import play.libs.F.Tuple
+@(students: Seq[Student], evaluationForm: Form[EvaluationForm])(implicit request: RequestHeader, messagesProvider: MessagesProvider)
+
+@main_body("Block Coding Class") {
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">이름</th>
+                <th scope="col">반</th>
+            </tr>
+        </thead>
+        <tbody>
+        @for(student <- students.zipWithIndex) {
+            @tags.student_item(student._2 + 1, student._1)
+        }
+        </tbody>
+    </table>
+    @helper.form(action = routes.GoogleSheetController.insertStudent, Symbol("class") -> "row g-3 justify-content-end") {
+        @CSRF.formField @* <- takes a RequestHeader *@
+        <input type="hidden" class="form-control" name="group" placeholder="Student Name" value="블럭코딩" >
+        <div class="col-auto">
+            <label for="studentName" class="visually-hidden">Student Name</label>
+            <input type="text" class="form-control" name="name" placeholder="Student Name" required>
+        </div>
+        <div class="col-auto">
+            <label for="studentId" class="visually-hidden">Student ID</label>
+            <input type="text" class="form-control" name="id" placeholder="Student ID" required>
+        </div>
+        <div class="col-auto">
+            <button type="submit" class="btn btn-primary mb-3">등록</button>
+        </div>
+    }
+
+    @helper.form(action = routes.GoogleSheetController.insertEvaluation, Symbol("class") -> "needs-validation") {
+        @CSRF.formField @* <- takes a RequestHeader *@
+        <div class="row g-3 align-items-center">
+            <div class="col-12">
+                <div class="input-group has-validation">
+                    <input type="text" class="form-control" id="evaluationsForm-topic" name="topic" placeholder="진도" required></input>
+                </div>
+            </div>
+            <div class="col-12">
+                <div class="input-group has-validation">
+                    <textarea class="form-control" id="evaluationsForm-body" name="body" placeholder="수업내용" required></textarea>
+                </div>
+            </div>
+            <div class="col-12">
+                <div class="input-group has-validation">
+                    <textarea class="form-control" id="evaluationsForm-closing" name="closing" placeholder="평가인사" required>항상 최선을 다해 가르치는 잼코딩이 되도록 노력 하겠습니다. 궁금하신 부분이나 상담이 필요하신 학부모님께서는 학원으로 전화 주시면 친절한 상담 도와 드리도록 하겠습니다. 감사합니다.</textarea>
+                </div>
+            </div>
+            <div class="col-12">
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="isAssignment" id= "evaluationsForm-isAssignment" value="true">
+                    <label class="form-check-label" for="evaluationsForm-isAssignment">
+                        과제
+                    </label>
+                </div>
+            </div>
+            @helper.repeatWithIndex(evaluationForm("evaluations"), min = students.size) { (field, index) =>
+                @tags.student_evaluation_form(field, students(index))
+            }
+        </div>
+        <hr class="my-4">
+        <button class="w-100 btn btn-primary btn-lg" type="submit">Continue to checkout</button>
+    }
+    @* <form class="row g-3 justify-content-end">
+    <div class="col-auto">
+    <label for="studentName" class="visually-hidden">Student Name</label>
+    <input type="text" class="form-control" id="studentName" placeholder="Student Name" >
+    </div>
+    <div class="col-auto">
+    <label for="studentId" class="visually-hidden">Student ID</label>
+    <input type="text" class="form-control" id="studentId" placeholder="Student ID">
+    </div>
+    <div class="col-auto">
+    <button type="submit" class="btn btn-primary mb-3">등록</button>
+    </div>
+    </form>*@
+}
